@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.probestack.forgestudio.design.service.EventsService;
 import com.probestack.forgestudio.design.validation.GeneratedRequestValidator;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-14T07:29:28.385377570Z[GMT]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-14T07:30:43.073650521Z[GMT]")
 @Controller
 @RequestMapping("${openapi.auditLogService.base-path:/v1}")
 public class EventsApiController implements EventsApi {

@@ -12,7 +12,7 @@ import jakarta.annotation.Generated;
 /**
  * AnnotateAuditEventRequest
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-14T07:29:28.385377570Z[GMT]")public class AnnotateAuditEventRequest {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-14T07:30:43.073650521Z[GMT]")public class AnnotateAuditEventRequest {
 
   private String annotation;
 
