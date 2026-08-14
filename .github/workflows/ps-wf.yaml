@@ -14,7 +14,7 @@ jobs:
       apigee_org: gen-ai-poc-onboarding
       apigee_env: dev
       deploy_proxy: audit-log-service
-      resourcetype: apis
+      resourcetype: sharedflows
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
