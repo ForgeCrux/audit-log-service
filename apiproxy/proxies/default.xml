@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ProxyEndpoint – default
+  Defines how Apigee handles inbound HTTP requests:
+    1. PreFlow: security, rate limiting, transformation (all requests)
+    2. Conditional Flows: one per operation from the OpenAPI spec
+    3. PostFlow: logging, response transform (all requests)
+    4. FaultRules: error handling (all fault scenarios)
+-->
+<ProxyEndpoint name="default">
+  <Description>Default proxy endpoint generated from OpenAPI spec</Description>
+
+  <!-- ═══ FAULT RULES ═══════════════════════════════════════════════ -->
+  <FaultRules>
+    <FaultRule name="QuotaExceeded">
+      <Condition>(fault.name == "QuotaViolation")</Condition>
+      <Step><Name>AM-SetErrorHeaders</Name></Step>
+      <Step><Name>RF-QuotaExceeded</Name></Step>
+    </FaultRule>
+    <FaultRule name="SpikeArrestViolation">
+      <Condition>(fault.name == "SpikeArrestViolation")</Condition>
+      <Step><Name>AM-SetErrorHeaders</Name></Step>
+      <Step><Name>RF-SpikeArrestViolation</Name></Step>
+    </FaultRule>
+    <FaultRule name="ThreatProtection">
+      <Condition>(fault.name == "ExceededContainerDepth") or (fault.name == "ExceededObjectEntryNameLength") or (fault.name == "ExceededObjectEntryCount") or (fault.name == "ExceededArrayElementCount") or (fault.name == "ExceededStringValueLength")</Condition>
+      <Step><Name>AM-SetErrorHeaders</Name></Step>
+      <Step><Name>RF-ThreatViolation</Name></Step>
+    </FaultRule>
+
+    <!-- Default: catch all remaining faults -->
+    <DefaultFaultRule name="DefaultFaultRule">
+      <AlwaysEnforce>true</AlwaysEnforce>
+      <Step>
+        <Name>AM-SetErrorHeaders</Name>
+      </Step>
+      <Step>
+        <Name>RF-UnexpectedError</Name>
+        <Condition>(fault.name != "QuotaViolation") and
+                   (fault.name != "SpikeArrestViolation") and
+                   (fault.name != "InvalidApiKey") and
+                   (fault.name != "FailedToResolveAPIKey")</Condition>
+      </Step>
+      <Step>
+        <Name>ML-RequestLog</Name>
+        <Condition>lookupcache.PC-LookupCache.cachehit == null or lookupcache.PC-LookupCache.cachehit == false</Condition>
+      </Step>
+    </DefaultFaultRule>
+  </FaultRules>
+
+  <!-- ═══ PRE-FLOW (every request) ═════════════════════════════════ -->
+  <PreFlow name="PreFlow">
+    <Request>
+      <!-- Auth → Threat Protection → Rate Limit → Transform → Cache Lookup -->
+      <Step>
+        <Name>TP-JsonThreatProtection</Name>
+      </Step>
+      <Step>
+        <Name>OA-VerifyToken</Name>
+      </Step>
+      <Step>
+        <Name>AM-SetAuthContext</Name>
+      </Step>
+      <Step>
+        <Name>SA-SpikeArrest</Name>
+      </Step>
+      <Step>
+        <Name>Q-ApiQuota</Name>
+      </Step>
+      <Step>
+        <Name>AM-AddCorrelationId</Name>
+      </Step>
+      <Step>
+        <Name>EV-ExtractPathParams</Name>
+      </Step>
+      <Step>
+        <Name>AM-RequestTransform</Name>
+      </Step>
+
+    </Request>
+    <Response>
+      <!-- Transform → Echo Headers → Cache Populate → Log -->
+      <Step>
+        <Name>AM-EchoCorrelationId</Name>
+      </Step>
+      <Step>
+        <Name>AM-ResponseTransform</Name>
+      </Step>
+
+    </Response>
+  </PreFlow>
+
+  <!-- ═══ OPERATION FLOWS (per OpenAPI path+method) ════════════════ -->
+  <Flows>
+    <Flow name="listAuditEvents">
+      <Description>List audit events [GET /events]</Description>
+      <Request/>
+      <Response/>
+      <Condition>(request.verb == "GET") and (proxy.pathsuffix MatchesPath "/events")</Condition>
+    </Flow>
+    <Flow name="createAuditEvent">
+      <Description>Record an audit event [POST /events]</Description>
+      <Request/>
+      <Response/>
+      <Condition>(request.verb == "POST") and (proxy.pathsuffix MatchesPath "/events")</Condition>
+    </Flow>
+    <Flow name="getAuditEventById">
+      <Description>Get an audit event by ID [GET /events/{eventId}]</Description>
+      <Request/>
+      <Response/>
+      <Condition>(request.verb == "GET") and (proxy.pathsuffix MatchesPath "/events/*")</Condition>
+    </Flow>
+    <Flow name="annotateAuditEvent">
+      <Description>Annotate an audit event [PUT /events/{eventId}]</Description>
+      <Request/>
+      <Response/>
+      <Condition>(request.verb == "PUT") and (proxy.pathsuffix MatchesPath "/events/*")</Condition>
+    </Flow>
+    <Flow name="purgeAuditEvent">
+      <Description>Purge an audit event [DELETE /events/{eventId}]</Description>
+      <Request/>
+      <Response/>
+      <Condition>(request.verb == "DELETE") and (proxy.pathsuffix MatchesPath "/events/*")</Condition>
+    </Flow>
+
+    <!-- Catch-all: 404 for any unmatched path -->
+    <Flow name="UnmatchedPath">
+      <Description>Returns 404 for requests that do not match any defined path</Description>
+      <Request>
+        <Step>
+          <Name>RF-PathNotFound</Name>
+        </Step>
+      </Request>
+      <Response/>
+    </Flow>
+  </Flows>
+
+  <!-- ═══ POST-FLOW (only if no fault) ═════════════════════════════ -->
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response/>
+  </PostFlow>
+
+  <!-- ═══ HTTP Proxy Connection ═════════════════════════════════════ -->
+  <HTTPProxyConnection>
+    <BasePath>/v1</BasePath>
+    <Properties/>
+    <VirtualHost>secure</VirtualHost>
+  </HTTPProxyConnection>
+
+  <RouteRule name="CacheRoute">
+    <Condition>lookupcache.PC-LookupCache.cachehit == "true"</Condition>
+    <!-- Route to null target when response is served from cache -->
+  </RouteRule>
+  <RouteRule name="DefaultRoute">
+    <TargetEndpoint>default</TargetEndpoint>
+  </RouteRule>
+</ProxyEndpoint>

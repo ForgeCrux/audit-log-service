@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  JSONThreatProtection – JSON Payload Validation
+  Protects against JSON-based attacks by enforcing structural limits.
+  Only applied when Content-Type is application/json.
+
+  OWASP LLM / API Security alignment:
+  - API4: Unrestricted Resource Consumption — limits array/object sizes
+  - API8: Security Misconfiguration — explicit size limits
+
+  Tune the limits below for your specific API payload requirements.
+  Too-tight limits will cause legitimate requests to fail.
+-->
+<JSONThreatProtection async="false" continueOnError="false" enabled="true"
+                      name="TP-JsonThreatProtection">
+  <DisplayName>JSON Threat Protection</DisplayName>
+  <Source>request</Source>
+  <!-- Maximum number of elements in any array -->
+  <ArrayElementCount>20</ArrayElementCount>
+  <!-- Maximum nesting depth of JSON objects -->
+  <ContainerDepth>10</ContainerDepth>
+  <!-- Maximum number of entries per JSON object -->
+  <ObjectEntryCount>15</ObjectEntryCount>
+  <!-- Maximum length of any object entry name (key) -->
+  <ObjectEntryNameLength>50</ObjectEntryNameLength>
+  <!-- Maximum length of any string value -->
+  <StringValueLength>500</StringValueLength>
+</JSONThreatProtection>

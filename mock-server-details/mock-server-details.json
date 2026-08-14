@@ -1,0 +1,110 @@
+{
+  "microserviceId" : "6a7eb40f254dc050c6999d1b",
+  "mocks" : [ {
+    "id" : "e7b88b75-9c69-4d65-aa51-e19952faf956",
+    "microserviceId" : "6a7eb40f254dc050c6999d1b",
+    "specMetadataId" : "6a7eb42be3a11656ce5358c0",
+    "apiSpecName" : "Audit Log Service",
+    "name" : "mock-audit-log-service",
+    "mockServiceName" : "mock-audit-log-service",
+    "mockServerUrl" : "https://forgesphere.probestack.io/mock-api/v1/api/mocks/mock-80d8e7e1",
+    "responseLatencyMs" : 0,
+    "mockUrl" : "mock-80d8e7e1",
+    "isPrivate" : true,
+    "delayMs" : 0,
+    "requestCount" : 5,
+    "createdAt" : "2026-08-14T06:22:59.913Z",
+    "updatedAt" : "2026-08-14T06:23:02.281Z",
+    "endpoints" : [ {
+      "id" : "c4e6098b-990c-4bee-b6e6-a4db01239b38",
+      "mockId" : "e7b88b75-9c69-4d65-aa51-e19952faf956",
+      "path" : "/events",
+      "method" : "GET",
+      "responseStatus" : 200,
+      "responseHeaders" : {
+        "Content-Type" : "application/json"
+      },
+      "responseBody" : "{\"page\":1,\"size\":20,\"totalElements\":24810,\"totalPages\":1241,\"content\":[{\"eventId\":\"a1u2d3t4\",\"action\":\"UPDATE\",\"resourceType\":\"Invoice\",\"resourceId\":\"INV-2026-00317\",\"actorEmail\":\"finance.admin@example.com\",\"actorRole\":\"ORG_ADMIN\",\"ipAddress\":\"203.0.113.42\",\"beforeValue\":{},\"afterValue\":{},\"annotation\":\"Reviewed during Q3 audit\",\"occurredAt\":\"2026-08-12T10:00:00Z\"}]}",
+      "delayMs" : 0,
+      "isActive" : true,
+      "requestBodySample" : null,
+      "validationMode" : "NONE",
+      "validationSchema" : null,
+      "validateMethod" : true,
+      "createdAt" : "2026-08-14T06:22:59.935Z",
+      "updatedAt" : "2026-08-14T06:22:59.936Z"
+    }, {
+      "id" : "05465663-4fee-4e2e-9504-3648d3507f47",
+      "mockId" : "e7b88b75-9c69-4d65-aa51-e19952faf956",
+      "path" : "/events",
+      "method" : "POST",
+      "responseStatus" : 201,
+      "responseHeaders" : {
+        "Content-Type" : "application/json"
+      },
+      "responseBody" : "{\"eventId\":\"a1u2d3t4\",\"action\":\"UPDATE\",\"resourceType\":\"Invoice\",\"resourceId\":\"INV-2026-00317\",\"actorEmail\":\"finance.admin@example.com\",\"actorRole\":\"ORG_ADMIN\",\"ipAddress\":\"203.0.113.42\",\"beforeValue\":{},\"afterValue\":{},\"annotation\":\"Reviewed during Q3 audit\",\"occurredAt\":\"2026-08-12T10:00:00Z\"}",
+      "delayMs" : 0,
+      "isActive" : true,
+      "requestBodySample" : "{\"action\":\"UPDATE\",\"resourceType\":\"Invoice\",\"resourceId\":\"INV-2026-00317\",\"actorEmail\":\"finance.admin@example.com\",\"actorRole\":\"ORG_ADMIN\",\"ipAddress\":\"203.0.113.42\",\"beforeValue\":{},\"afterValue\":{}}",
+      "validationMode" : "NONE",
+      "validationSchema" : null,
+      "validateMethod" : true,
+      "createdAt" : "2026-08-14T06:22:59.944Z",
+      "updatedAt" : "2026-08-14T06:22:59.945Z"
+    }, {
+      "id" : "08ca3583-df06-40fb-950e-036687a5cda6",
+      "mockId" : "e7b88b75-9c69-4d65-aa51-e19952faf956",
+      "path" : "/events/{eventId}",
+      "method" : "DELETE",
+      "responseStatus" : 204,
+      "responseHeaders" : {
+        "Content-Type" : "application/json"
+      },
+      "responseBody" : "{}",
+      "delayMs" : 0,
+      "isActive" : true,
+      "requestBodySample" : null,
+      "validationMode" : "NONE",
+      "validationSchema" : null,
+      "validateMethod" : true,
+      "createdAt" : "2026-08-14T06:22:59.967Z",
+      "updatedAt" : "2026-08-14T06:22:59.967Z"
+    }, {
+      "id" : "a32bedf4-7af6-4bc4-adb7-0a1a0f585e8f",
+      "mockId" : "e7b88b75-9c69-4d65-aa51-e19952faf956",
+      "path" : "/events/{eventId}",
+      "method" : "GET",
+      "responseStatus" : 200,
+      "responseHeaders" : {
+        "Content-Type" : "application/json"
+      },
+      "responseBody" : "{\"eventId\":\"a1u2d3t4\",\"action\":\"UPDATE\",\"resourceType\":\"Invoice\",\"resourceId\":\"INV-2026-00317\",\"actorEmail\":\"finance.admin@example.com\",\"actorRole\":\"ORG_ADMIN\",\"ipAddress\":\"203.0.113.42\",\"beforeValue\":{},\"afterValue\":{},\"annotation\":\"Reviewed during Q3 audit\",\"occurredAt\":\"2026-08-12T10:00:00Z\"}",
+      "delayMs" : 0,
+      "isActive" : true,
+      "requestBodySample" : null,
+      "validationMode" : "NONE",
+      "validationSchema" : null,
+      "validateMethod" : true,
+      "createdAt" : "2026-08-14T06:22:59.952Z",
+      "updatedAt" : "2026-08-14T06:22:59.952Z"
+    }, {
+      "id" : "032416cd-b1ed-40e0-b2de-df6d348ad784",
+      "mockId" : "e7b88b75-9c69-4d65-aa51-e19952faf956",
+      "path" : "/events/{eventId}",
+      "method" : "PUT",
+      "responseStatus" : 200,
+      "responseHeaders" : {
+        "Content-Type" : "application/json"
+      },
+      "responseBody" : "{\"eventId\":\"a1u2d3t4\",\"action\":\"UPDATE\",\"resourceType\":\"Invoice\",\"resourceId\":\"INV-2026-00317\",\"actorEmail\":\"finance.admin@example.com\",\"actorRole\":\"ORG_ADMIN\",\"ipAddress\":\"203.0.113.42\",\"beforeValue\":{},\"afterValue\":{},\"annotation\":\"Reviewed during Q3 audit\",\"occurredAt\":\"2026-08-12T10:00:00Z\"}",
+      "delayMs" : 0,
+      "isActive" : true,
+      "requestBodySample" : "{\"annotation\":\"Reviewed during Q3 audit\"}",
+      "validationMode" : "NONE",
+      "validationSchema" : null,
+      "validateMethod" : true,
+      "createdAt" : "2026-08-14T06:22:59.959Z",
+      "updatedAt" : "2026-08-14T06:22:59.959Z"
+    } ]
+  } ]
+}

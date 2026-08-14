@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  RaiseFault – Threat Protection Violation (400)
+  Raised when a JSON or XML payload fails threat protection checks.
+  Returns 400 Bad Request with a generic (non-leaky) error message.
+-->
+<RaiseFault async="false" continueOnError="false" enabled="true"
+            name="RF-ThreatViolation">
+  <DisplayName>Threat Protection Violation</DisplayName>
+  <FaultResponse>
+    <Set>
+      <StatusCode>400</StatusCode>
+      <ReasonPhrase>Bad Request</ReasonPhrase>
+      <Headers>
+        <Header name="Content-Type">application/json</Header>
+      </Headers>
+      <Payload contentType="application/json">{
+  "error": {
+    "code": 400,
+    "type": "security.ThreatDetected",
+    "message": "Request payload violates security constraints. Please check your request.",
+    "requestId": "{messageid}"
+  }
+}</Payload>
+    </Set>
+  </FaultResponse>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

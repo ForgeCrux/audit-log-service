@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  RaiseFault – Quota Exceeded (429)
+  Returned when the consumer has exhausted their quota.
+  The Retry-After header informs the client when they can retry.
+-->
+<RaiseFault async="false" continueOnError="false" enabled="true"
+            name="RF-QuotaExceeded">
+  <DisplayName>Quota Exceeded</DisplayName>
+  <FaultResponse>
+    <Set>
+      <StatusCode>429</StatusCode>
+      <ReasonPhrase>Too Many Requests</ReasonPhrase>
+      <Headers>
+        <Header name="Content-Type">application/json</Header>
+        <Header name="X-RateLimit-Limit">1000</Header>
+        <Header name="X-RateLimit-Remaining">{ratelimit.Q-ApiQuota.available.count}</Header>
+        <Header name="X-RateLimit-Reset">{ratelimit.Q-ApiQuota.expiry.time}</Header>
+        <Header name="Retry-After">60</Header>
+      </Headers>
+      <Payload contentType="application/json">{
+  "error": {
+    "code": 429,
+    "type": "ratelimit.QuotaExceeded",
+    "message": "Quota exceeded. You have reached your request limit for this time window.",
+    "limit": 1000,
+    "remaining": 0,
+    "requestId": "{messageid}"
+  }
+}</Payload>
+    </Set>
+  </FaultResponse>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

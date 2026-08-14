@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RaiseFault async="false" continueOnError="false" enabled="true"
+            name="RF-PathNotFound">
+  <DisplayName>Path Not Found</DisplayName>
+  <FaultResponse>
+    <Set>
+      <StatusCode>404</StatusCode>
+      <ReasonPhrase>Not Found</ReasonPhrase>
+      <Headers>
+        <Header name="Content-Type">application/json</Header>
+      </Headers>
+      <Payload contentType="application/json">{
+  "error": {
+    "code": 404,
+    "type": "routing.PathNotFound",
+    "message": "The requested path '{proxy.basepath}{proxy.pathsuffix}' does not exist on this API.",
+    "requestId": "{messageid}"
+  }
+}</Payload>
+    </Set>
+  </FaultResponse>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

@@ -1,0 +1,22 @@
+name: Apigee Platform CI
+
+on:
+  push:
+    branches:
+      - feature-dev
+jobs:
+  deploy:
+    uses: ForgeCrux/pipeline-template/.github/workflows/apigee-v1.yaml@main
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      apigee_org: gen-ai-poc-onboarding
+      apigee_env: dev
+      deploy_proxy: audit-log-service
+      resourcetype: apis
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}

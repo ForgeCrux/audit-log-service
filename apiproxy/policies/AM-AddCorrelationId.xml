@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AssignMessage – Add Correlation / Trace ID
+  Injects X-Correlation-Id into every request.
+  If the caller already provides one, it is preserved;
+  otherwise Apigee generates one from the message ID.
+  The same ID is echoed back in the response for tracing.
+-->
+<AssignMessage async="false" continueOnError="false" enabled="true"
+               name="AM-AddCorrelationId">
+  <DisplayName>Add Correlation ID</DisplayName>
+  <AssignTo createNew="false" type="request"/>
+  <Set>
+    <Headers>
+      <!--
+        Use caller-supplied correlation ID if present,
+        otherwise use Apigee message ID as the correlation ID.
+      -->
+      <Header name="X-Correlation-Id">{request.header.x-correlation-id:}{messageid}</Header>
+      <Header name="X-Apigee-Proxy">{apiproxy.name}:{apiproxy.revision}</Header>
+      <Header name="X-Target-Env">{environment.name}</Header>
+    </Headers>
+  </Set>
+  <!--
+    Also add correlation ID to the response so the caller can
+    use it for support tickets and log correlation.
+  -->
+  <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+</AssignMessage>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AssignMessage – Set Auth Context
+  Propagates verified OAuth2 token metadata as request headers
+  to the backend service so it knows who is calling.
+-->
+<AssignMessage async="false" continueOnError="false" enabled="true"
+               name="AM-SetAuthContext">
+  <DisplayName>Set Auth Context Headers</DisplayName>
+  <AssignTo createNew="false" type="request"/>
+  <Set>
+    <Headers>
+      <Header name="X-Authenticated-Client-Id">{oauthv2.OA-VerifyToken.client_id}</Header>
+      <Header name="X-Authenticated-App-Name">{oauthv2.OA-VerifyToken.app.name}</Header>
+      <Header name="X-Authenticated-Developer-Email">{oauthv2.OA-VerifyToken.developer.email}</Header>
+      <Header name="X-Auth-Type">oauth2</Header>
+    </Headers>
+  </Set>
+  <Remove>
+    <Headers>
+      <!-- Strip the raw Authorization header from backend request -->
+      <Header name="Authorization"/>
+    </Headers>
+  </Remove>
+</AssignMessage>

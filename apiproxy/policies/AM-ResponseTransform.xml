@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AssignMessage – Response Transformation
+  Adds security headers and removes internal server headers
+  from the response before it reaches the caller.
+-->
+<AssignMessage async="false" continueOnError="false" enabled="true"
+               name="AM-ResponseTransform">
+  <DisplayName>Transform Response Headers</DisplayName>
+  <AssignTo createNew="false" type="response"/>
+  <Set>
+    <Headers>
+      <!-- Security headers - always add these -->
+      <Header name="Strict-Transport-Security">max-age=31536000; includeSubDomains</Header>
+      <Header name="X-Content-Type-Options">nosniff</Header>
+      <Header name="X-Frame-Options">DENY</Header>
+      <Header name="X-XSS-Protection">1; mode=block</Header>
+      <Header name="Cache-Control">no-store</Header>
+      <Header name="X-Response-Time">{system.timestamp}</Header>
+    </Headers>
+  </Set>
+  <Remove>
+    <Headers>
+      <!-- Remove headers that expose backend infrastructure -->
+      <Header name="Server"/>
+      <Header name="X-Powered-By"/>
+      <Header name="X-AspNet-Version"/>
+      <Header name="X-AspNetMvc-Version"/>
+    </Headers>
+  </Remove>
+</AssignMessage>

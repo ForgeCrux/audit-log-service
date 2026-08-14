@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RaiseFault async="false" continueOnError="false" enabled="true"
+            name="RF-SpikeArrestViolation">
+  <DisplayName>Spike Arrest Violation</DisplayName>
+  <FaultResponse>
+    <Set>
+      <StatusCode>429</StatusCode>
+      <ReasonPhrase>Too Many Requests</ReasonPhrase>
+      <Headers>
+        <Header name="Content-Type">application/json</Header>
+        <Header name="Retry-After">1</Header>
+      </Headers>
+      <Payload contentType="application/json">{
+  "error": {
+    "code": 429,
+    "type": "ratelimit.SpikeArrestViolation",
+    "message": "Spike arrest: request rate exceeded. Please slow down.",
+    "requestId": "{messageid}"
+  }
+}</Payload>
+    </Set>
+  </FaultResponse>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

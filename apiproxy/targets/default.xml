@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TargetEndpoint – default
+  Defines the backend connection. Apigee forwards requests
+  to the URL configured below after all PreFlow policies pass.
+
+  Target URL: https://api.example.com
+
+  For load-balancing across multiple backends, replace the
+  <URL> element with an <HTTPTargetConnection><LoadBalancer> block.
+-->
+<TargetEndpoint name="default">
+  <Description>Backend target server</Description>
+
+  <FaultRules/>
+  <PreFlow name="PreFlow">
+    <Request/>
+    <Response/>
+  </PreFlow>
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response/>
+  </PostFlow>
+  <Flows/>
+
+  <HTTPTargetConnection>
+    <URL>https://api.example.com</URL>
+    <Properties>
+      <!-- Connection keep-alive -->
+      <Property name="keepalive.timeout.millis">60000</Property>
+      <!-- Backend connection timeout (10 s) -->
+      <Property name="connect.timeout.millis">10000</Property>
+      <!-- Backend response read timeout (30 s) -->
+      <Property name="io.timeout.millis">30000</Property>
+    </Properties>
+    <!--
+      For mTLS with the backend, uncomment and configure:
+      <SSLInfo>
+        <Enabled>true</Enabled>
+        <ClientAuthEnabled>true</ClientAuthEnabled>
+        <KeyStore>ref://myKeystore</KeyStore>
+        <KeyAlias>myAlias</KeyAlias>
+        <TrustStore>ref://myTruststore</TrustStore>
+      </SSLInfo>
+    -->
+  </HTTPTargetConnection>
+</TargetEndpoint>
