@@ -1,6 +1,6 @@
 {
   "info" : {
-    "_postman_id" : "e7cd75f6-2c07-4bb8-8d75-134c75d1f873",
+    "_postman_id" : "90cb9964-b62f-46dc-83c1-ff9b6276805e",
     "name" : "Audit Log Service",
     "description" : "Generated Postman collection for audit-log-service",
     "schema" : "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -95,7 +95,7 @@
           "value" : "application/json"
         } ],
         "url" : {
-          "raw" : "{{baseUrl}}/events?actorEmail=sample-actorEmail&action=CREATE&resourceType=sample-resourceType&fromDate=2026-08-14T07:29:32.008990613Z&toDate=2026-08-14T07:29:32.009051867Z&page=1&size=1",
+          "raw" : "{{baseUrl}}/events?actorEmail=sample-actorEmail&action=CREATE&resourceType=sample-resourceType&fromDate=2026-08-14T07:30:44.284256545Z&toDate=2026-08-14T07:30:44.284311570Z&page=1&size=1",
           "host" : [ "{{baseUrl}}" ],
           "path" : [ "events" ],
           "query" : [ {
@@ -109,10 +109,10 @@
             "value" : "sample-resourceType"
           }, {
             "key" : "fromDate",
-            "value" : "2026-08-14T07:29:32.009162192Z"
+            "value" : "2026-08-14T07:30:44.284372924Z"
           }, {
             "key" : "toDate",
-            "value" : "2026-08-14T07:29:32.009176355Z"
+            "value" : "2026-08-14T07:30:44.284384873Z"
           }, {
             "key" : "page",
             "value" : 1

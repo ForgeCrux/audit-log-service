@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-14T07:29:28.385377570Z[GMT]")@Validated
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-14T07:30:43.073650521Z[GMT]")@Validated
 @Tag(name = "Events", description = "Operations on audit events")
 public interface EventsApi {
 
