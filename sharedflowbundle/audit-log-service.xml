@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharedFlowBundle revision="1" name="audit-log-service">
+  <DisplayName>audit-log-service</DisplayName>
+  <Description>Shared cross-cutting concerns: auth, rate-limiting, logging, security</Description>
+  <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+  <Policies>
+    <Policy>OA-VerifyToken</Policy>
+    <Policy>SA-SpikeArrest</Policy>
+    <Policy>Q-ApiQuota</Policy>
+  </Policies>
+  <SharedFlows>
+    <SharedFlow>default</SharedFlow>
+  </SharedFlows>
+</SharedFlowBundle>
