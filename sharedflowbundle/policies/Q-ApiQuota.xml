@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Quota – API Request Quota
+  Enforces a sliding-window quota per API consumer (app client ID).
+  Quota values can be overridden per API Product definition.
+  If the consumer exceeds the limit, a 429 fault is raised automatically.
+
+  Default: 1000 requests per 1 minute(s).
+  Override per-product: set the apiproduct.developer.quota.* attributes.
+-->
+<Quota async="false" continueOnError="false" enabled="true" type="rollingwindow"
+       name="Q-ApiQuota">
+  <DisplayName>API Quota</DisplayName>
+  <Allow count="1000" countRef="verifyapikey.OA-VerifyApiKey.apiproduct.developer.quota.limit"/>
+  <Interval ref="verifyapikey.OA-VerifyApiKey.apiproduct.developer.quota.interval">1</Interval>
+  <TimeUnit ref="verifyapikey.OA-VerifyApiKey.apiproduct.developer.quota.timeunit">minute</TimeUnit>
+  <Identifier ref="request.header.x-authenticated-client-id"/>
+  <Distributed>true</Distributed>
+  <Synchronous>false</Synchronous>
+  <StartTime>2015-2-11 12:00:00</StartTime>
+</Quota>

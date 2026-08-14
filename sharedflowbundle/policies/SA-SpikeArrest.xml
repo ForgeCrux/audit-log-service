@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpikeArrest – Traffic Spike Protection
+  Smooths traffic bursts before quota enforcement.
+  Rate: 100ps (requests per second).
+  This runs BEFORE quota so short spikes don't consume quota counts.
+-->
+<SpikeArrest async="false" continueOnError="false" enabled="true"
+             name="SA-SpikeArrest">
+  <DisplayName>Spike Arrest</DisplayName>
+  <Rate>100ps</Rate>
+  <UseEffectiveCount>true</UseEffectiveCount>
+</SpikeArrest>

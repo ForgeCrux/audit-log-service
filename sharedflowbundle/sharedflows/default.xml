@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SharedFlow – default
+  Contains the ordered policy steps executed when any proxy
+  calls this SharedFlow via FlowCallout.
+
+  Flow order (request):
+
+  OA-VerifyToken
+  SA-SpikeArrest
+  Q-ApiQuota
+-->
+<SharedFlow name="default">
+      <Step>
+        <Name>OA-VerifyToken</Name>
+      </Step>
+      <Step>
+        <Name>SA-SpikeArrest</Name>
+      </Step>
+      <Step>
+        <Name>Q-ApiQuota</Name>
+      </Step>
+
+</SharedFlow>
