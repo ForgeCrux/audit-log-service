@@ -1,0 +1,219 @@
+{
+  "info" : {
+    "_postman_id" : "e7cd75f6-2c07-4bb8-8d75-134c75d1f873",
+    "name" : "Audit Log Service",
+    "description" : "Generated Postman collection for audit-log-service",
+    "schema" : "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable" : [ {
+    "key" : "baseUrl",
+    "value" : "http://localhost:8080",
+    "type" : "string"
+  }, {
+    "key" : "bearerToken",
+    "value" : "",
+    "type" : "string"
+  }, {
+    "key" : "resourceId",
+    "value" : "sample-id",
+    "type" : "string"
+  }, {
+    "key" : "clientId",
+    "value" : "generated-service-client",
+    "type" : "string"
+  }, {
+    "key" : "clientSecret",
+    "value" : "change-me",
+    "type" : "string"
+  }, {
+    "key" : "scope",
+    "value" : "api.read api.write",
+    "type" : "string"
+  } ],
+  "item" : [ {
+    "name" : "Security",
+    "item" : [ {
+      "name" : "Get OAuth2 Token",
+      "request" : {
+        "auth" : {
+          "type" : "basic",
+          "basic" : [ {
+            "key" : "username",
+            "value" : "{{clientId}}",
+            "type" : "string"
+          }, {
+            "key" : "password",
+            "value" : "{{clientSecret}}",
+            "type" : "string"
+          } ]
+        },
+        "method" : "POST",
+        "header" : [ {
+          "key" : "Content-Type",
+          "value" : "application/x-www-form-urlencoded"
+        }, {
+          "key" : "Accept",
+          "value" : "application/json"
+        } ],
+        "body" : {
+          "mode" : "urlencoded",
+          "urlencoded" : [ {
+            "key" : "grant_type",
+            "value" : "client_credentials",
+            "type" : "text"
+          }, {
+            "key" : "scope",
+            "value" : "{{scope}}",
+            "type" : "text"
+          } ]
+        },
+        "url" : {
+          "raw" : "{{baseUrl}}/oauth2/token",
+          "host" : [ "{{baseUrl}}" ],
+          "path" : [ "oauth2", "token" ]
+        }
+      },
+      "event" : [ {
+        "listen" : "test",
+        "script" : {
+          "type" : "text/javascript",
+          "exec" : [ "const json = pm.response.json();", "if (json.access_token) {", "  pm.collectionVariables.set(\"bearerToken\", json.access_token);", "}" ]
+        }
+      } ]
+    } ]
+  }, {
+    "name" : "Events",
+    "item" : [ {
+      "name" : "List audit events",
+      "request" : {
+        "method" : "GET",
+        "header" : [ {
+          "key" : "Authorization",
+          "value" : "Bearer {{bearerToken}}"
+        }, {
+          "key" : "Accept",
+          "value" : "application/json"
+        } ],
+        "url" : {
+          "raw" : "{{baseUrl}}/events?actorEmail=sample-actorEmail&action=CREATE&resourceType=sample-resourceType&fromDate=2026-08-14T07:29:32.008990613Z&toDate=2026-08-14T07:29:32.009051867Z&page=1&size=1",
+          "host" : [ "{{baseUrl}}" ],
+          "path" : [ "events" ],
+          "query" : [ {
+            "key" : "actorEmail",
+            "value" : "sample-actorEmail"
+          }, {
+            "key" : "action",
+            "value" : "CREATE"
+          }, {
+            "key" : "resourceType",
+            "value" : "sample-resourceType"
+          }, {
+            "key" : "fromDate",
+            "value" : "2026-08-14T07:29:32.009162192Z"
+          }, {
+            "key" : "toDate",
+            "value" : "2026-08-14T07:29:32.009176355Z"
+          }, {
+            "key" : "page",
+            "value" : 1
+          }, {
+            "key" : "size",
+            "value" : 1
+          } ]
+        }
+      }
+    }, {
+      "name" : "Record an audit event",
+      "request" : {
+        "method" : "POST",
+        "header" : [ {
+          "key" : "Authorization",
+          "value" : "Bearer {{bearerToken}}"
+        }, {
+          "key" : "Content-Type",
+          "value" : "application/json"
+        }, {
+          "key" : "Accept",
+          "value" : "application/json"
+        } ],
+        "url" : {
+          "raw" : "{{baseUrl}}/events",
+          "host" : [ "{{baseUrl}}" ],
+          "path" : [ "events" ]
+        },
+        "body" : {
+          "mode" : "raw",
+          "raw" : "{\n  \"action\" : \"UPDATE\",\n  \"resourceType\" : \"Invoice\",\n  \"resourceId\" : \"INV-2026-00317\",\n  \"actorEmail\" : \"finance.admin@example.com\",\n  \"actorRole\" : \"ORG_ADMIN\",\n  \"ipAddress\" : \"203.0.113.42\",\n  \"beforeValue\" : {\n    \"key\" : \"\"\n  },\n  \"afterValue\" : {\n    \"key\" : \"\"\n  }\n}",
+          "options" : {
+            "raw" : {
+              "language" : "json"
+            }
+          }
+        }
+      }
+    }, {
+      "name" : "Purge an audit event",
+      "request" : {
+        "method" : "DELETE",
+        "header" : [ {
+          "key" : "Authorization",
+          "value" : "Bearer {{bearerToken}}"
+        }, {
+          "key" : "Accept",
+          "value" : "application/json"
+        } ],
+        "url" : {
+          "raw" : "{{baseUrl}}/events/{{{resourceId}}}",
+          "host" : [ "{{baseUrl}}" ],
+          "path" : [ "events", "{{{resourceId}}}" ]
+        }
+      }
+    }, {
+      "name" : "Get an audit event by ID",
+      "request" : {
+        "method" : "GET",
+        "header" : [ {
+          "key" : "Authorization",
+          "value" : "Bearer {{bearerToken}}"
+        }, {
+          "key" : "Accept",
+          "value" : "application/json"
+        } ],
+        "url" : {
+          "raw" : "{{baseUrl}}/events/{{{resourceId}}}",
+          "host" : [ "{{baseUrl}}" ],
+          "path" : [ "events", "{{{resourceId}}}" ]
+        }
+      }
+    }, {
+      "name" : "Annotate an audit event",
+      "request" : {
+        "method" : "PUT",
+        "header" : [ {
+          "key" : "Authorization",
+          "value" : "Bearer {{bearerToken}}"
+        }, {
+          "key" : "Content-Type",
+          "value" : "application/json"
+        }, {
+          "key" : "Accept",
+          "value" : "application/json"
+        } ],
+        "url" : {
+          "raw" : "{{baseUrl}}/events/{{{resourceId}}}",
+          "host" : [ "{{baseUrl}}" ],
+          "path" : [ "events", "{{{resourceId}}}" ]
+        },
+        "body" : {
+          "mode" : "raw",
+          "raw" : "{\n  \"annotation\" : \"Reviewed during Q3 audit\"\n}",
+          "options" : {
+            "raw" : {
+              "language" : "json"
+            }
+          }
+        }
+      }
+    } ]
+  } ]
+}

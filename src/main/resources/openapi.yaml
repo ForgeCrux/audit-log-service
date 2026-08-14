@@ -1,0 +1,516 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: audit@example.com
+    name: Compliance Engineering Team
+  description: |
+    Microservice for recording immutable audit events across the platform.
+    Supports append-only writes, actor and resource filtering, and export for compliance.
+  title: Audit Log Service
+  version: 1.0.0
+servers:
+- description: Production
+  url: https://api.example.com/v1
+- description: Local development
+  url: http://localhost:8080/v1
+tags:
+- description: Operations on audit events
+  name: Events
+paths:
+  /events:
+    get:
+      description: "Returns a paginated list of audit events, optionally filtered\
+        \ by actor, action, or time window."
+      operationId: listAuditEvents
+      parameters:
+      - description: Filter by the user who performed the action
+        explode: true
+        in: query
+        name: actorEmail
+        required: false
+        schema:
+          format: email
+          type: string
+        style: form
+      - description: Filter by action type
+        explode: true
+        in: query
+        name: action
+        required: false
+        schema:
+          enum:
+          - CREATE
+          - READ
+          - UPDATE
+          - DELETE
+          - LOGIN
+          - LOGOUT
+          - EXPORT
+          type: string
+        style: form
+      - description: "Filter by the type of resource acted upon (e.g., \"Invoice\"\
+          )"
+        explode: true
+        in: query
+        name: resourceType
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Return events at or after this timestamp
+        explode: true
+        in: query
+        name: fromDate
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Return events at or before this timestamp
+        explode: true
+        in: query
+        name: toDate
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Page number (starts at 1)
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          minimum: 1
+          type: integer
+        style: form
+      - description: Number of items per page
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventListResponse"
+          description: Successful response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Invalid request - the server could not understand the payload
+            or parameters.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error - something went wrong on the server
+            side.
+      summary: List audit events
+      tags:
+      - Events
+      x-accepts: application/json
+      x-tags:
+      - tag: Events
+    post:
+      description: Appends a new event to the immutable log. The `eventId` is generated
+        by the server. Events cannot be modified once written.
+      operationId: createAuditEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAuditEventRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEvent"
+          description: Audit event recorded successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Invalid request - the server could not understand the payload
+            or parameters.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error - something went wrong on the server
+            side.
+      summary: Record an audit event
+      tags:
+      - Events
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Events
+  /events/{eventId}:
+    delete:
+      description: Removes an event that has passed its retention period. Events within
+        retention cannot be purged.
+      operationId: purgeAuditEvent
+      parameters:
+      - description: Unique audit event identifier (UUID)
+        explode: false
+        in: path
+        name: eventId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Audit event purged successfully (no content returned)
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The requested resource was not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error - something went wrong on the server
+            side.
+      summary: Purge an audit event
+      tags:
+      - Events
+      x-accepts: application/json
+      x-tags:
+      - tag: Events
+    get:
+      description: Retrieves a single audit event including its before and after value
+        snapshots.
+      operationId: getAuditEventById
+      parameters:
+      - description: Unique audit event identifier (UUID)
+        explode: false
+        in: path
+        name: eventId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEvent"
+          description: Audit event found
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Audit event not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error - something went wrong on the server
+            side.
+      summary: Get an audit event by ID
+      tags:
+      - Events
+      x-accepts: application/json
+      x-tags:
+      - tag: Events
+    put:
+      description: Adds a compliance annotation to an existing event. The original
+        event payload remains immutable.
+      operationId: annotateAuditEvent
+      parameters:
+      - description: Unique audit event identifier (UUID)
+        explode: false
+        in: path
+        name: eventId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnotateAuditEventRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEvent"
+          description: Audit event annotated successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Invalid request - the server could not understand the payload
+            or parameters.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The requested resource was not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error - something went wrong on the server
+            side.
+      summary: Annotate an audit event
+      tags:
+      - Events
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Events
+components:
+  responses:
+    BadRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      description: Invalid request - the server could not understand the payload or
+        parameters.
+    NotFound:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      description: The requested resource was not found.
+    InternalError:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      description: Internal server error - something went wrong on the server side.
+  schemas:
+    AuditEvent:
+      example:
+        annotation: Reviewed during Q3 audit
+        eventId: a1u2d3t4
+        resourceId: INV-2026-00317
+        afterValue:
+          key: ""
+        occurredAt: 2026-08-12T10:00:00Z
+        beforeValue:
+          key: ""
+        actorRole: ORG_ADMIN
+        ipAddress: 203.0.113.42
+        action: UPDATE
+        actorEmail: finance.admin@example.com
+        resourceType: Invoice
+      properties:
+        eventId:
+          description: Unique audit event ID (UUID)
+          example: a1u2d3t4
+          type: string
+        action:
+          enum:
+          - CREATE
+          - READ
+          - UPDATE
+          - DELETE
+          - LOGIN
+          - LOGOUT
+          - EXPORT
+          example: UPDATE
+          type: string
+        resourceType:
+          example: Invoice
+          type: string
+        resourceId:
+          example: INV-2026-00317
+          type: string
+        actorEmail:
+          example: finance.admin@example.com
+          format: email
+          type: string
+        actorRole:
+          example: ORG_ADMIN
+          type: string
+        ipAddress:
+          example: 203.0.113.42
+          type: string
+        beforeValue:
+          additionalProperties: true
+          description: Snapshot of the resource before the change
+          type: object
+        afterValue:
+          additionalProperties: true
+          description: Snapshot of the resource after the change
+          type: object
+        annotation:
+          example: Reviewed during Q3 audit
+          type: string
+        occurredAt:
+          example: 2026-08-12T10:00:00Z
+          format: date-time
+          type: string
+      required:
+      - action
+      - eventId
+      - occurredAt
+      - resourceType
+      type: object
+    CreateAuditEventRequest:
+      example:
+        resourceId: INV-2026-00317
+        afterValue:
+          key: ""
+        beforeValue:
+          key: ""
+        actorRole: ORG_ADMIN
+        ipAddress: 203.0.113.42
+        action: UPDATE
+        actorEmail: finance.admin@example.com
+        resourceType: Invoice
+      properties:
+        action:
+          enum:
+          - CREATE
+          - READ
+          - UPDATE
+          - DELETE
+          - LOGIN
+          - LOGOUT
+          - EXPORT
+          example: UPDATE
+          type: string
+        resourceType:
+          example: Invoice
+          type: string
+        resourceId:
+          example: INV-2026-00317
+          type: string
+        actorEmail:
+          example: finance.admin@example.com
+          format: email
+          type: string
+        actorRole:
+          example: ORG_ADMIN
+          type: string
+        ipAddress:
+          example: 203.0.113.42
+          type: string
+        beforeValue:
+          additionalProperties: true
+          type: object
+        afterValue:
+          additionalProperties: true
+          type: object
+      required:
+      - action
+      - actorEmail
+      - resourceType
+      type: object
+    AnnotateAuditEventRequest:
+      example:
+        annotation: Reviewed during Q3 audit
+      properties:
+        annotation:
+          example: Reviewed during Q3 audit
+          maxLength: 1000
+          type: string
+      required:
+      - annotation
+      type: object
+    AuditEventListResponse:
+      example:
+        size: 20
+        totalPages: 1241
+        page: 1
+        content:
+        - annotation: Reviewed during Q3 audit
+          eventId: a1u2d3t4
+          resourceId: INV-2026-00317
+          afterValue:
+            key: ""
+          occurredAt: 2026-08-12T10:00:00Z
+          beforeValue:
+            key: ""
+          actorRole: ORG_ADMIN
+          ipAddress: 203.0.113.42
+          action: UPDATE
+          actorEmail: finance.admin@example.com
+          resourceType: Invoice
+        - annotation: Reviewed during Q3 audit
+          eventId: a1u2d3t4
+          resourceId: INV-2026-00317
+          afterValue:
+            key: ""
+          occurredAt: 2026-08-12T10:00:00Z
+          beforeValue:
+            key: ""
+          actorRole: ORG_ADMIN
+          ipAddress: 203.0.113.42
+          action: UPDATE
+          actorEmail: finance.admin@example.com
+          resourceType: Invoice
+        totalElements: 24810
+      properties:
+        page:
+          example: 1
+          type: integer
+        size:
+          example: 20
+          type: integer
+        totalElements:
+          example: 24810
+          type: integer
+        totalPages:
+          example: 1241
+          type: integer
+        content:
+          items:
+            $ref: "#/components/schemas/AuditEvent"
+          type: array
+      type: object
+    ErrorResponse:
+      properties:
+        status:
+          example: 400
+          type: integer
+        errorCode:
+          example: INVALID_DATE_RANGE
+          type: string
+        message:
+          example: "Validation failed: fromDate must be before toDate"
+          type: string
+        timestamp:
+          example: 2026-08-12T10:00:00Z
+          format: date-time
+          type: string
+        path:
+          example: /v1/events
+          type: string
+      required:
+      - message
+      - status
+      type: object
